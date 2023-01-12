@@ -5,6 +5,8 @@ require('dotenv').config()
 const strings = require("/app/utils/strings.json");
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 const { BasicAuthenticator } = require('ibm-cloud-sdk-core');
+const { IamAuthenticator } = require('ibm-cloud-sdk-core');
+
 const uuid = require('uuid');
 
 // parse application/x-www-form-urlencoded
@@ -28,9 +30,13 @@ CLOUDANT_PASSWORD = process.env.CLOUDANT_PASSWORD;
 
 
 function initDB() {
-  const authenticator = new BasicAuthenticator({
-      username: process.env.CLOUDANT_USERNAME,
-      password: process.env.CLOUDANT_PASSWORD
+  // const authenticator = new BasicAuthenticator({
+  //    username: process.env.CLOUDANT_USERNAME,
+  //    password: process.env.CLOUDANT_PASSWORD
+  //});
+  
+  const authenticator = new IamAuthenticator({
+    apikey:  process.env.CLOUDANT_API,
   });
 
     service = new CloudantV1({
@@ -40,7 +46,7 @@ function initDB() {
 service.setServiceUrl(process.env.CLOUDANT_URL);
 }
 
-if (CLOUDANT_USERNAME && CLOUDANT_PASSWORD && CLOUDANT_URL) {
+if (CLOUDANT_USERNAME && CLOUDANT_URL) {
   initDB();
   // Create a new "moviesDb" database.
 
